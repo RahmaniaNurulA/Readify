@@ -1,4 +1,4 @@
-<h2>Readify – Digital Library System</h2>>
+<h2>Readify – Digital Library System</h2>
 
 Sistem perpustakaan digital modern untuk mengelola koleksi buku, peminjaman, dan pengembalian secara online. Readify dirancang untuk mempermudah akses terhadap koleksi buku digital dan mempermudah pengelolaan perpustakaan berbasis web.
 
