@@ -11,13 +11,15 @@ return new class extends Migration
      */
     public function up()
 {
-    Schema::create('buku_kategori', function (Blueprint $table) {
+    if (!Schema::hasTable('buku_kategori')) {
+        Schema::create('buku_kategori', function (Blueprint $table) {
         $table->unsignedBigInteger('id');
         $table->unsignedBigInteger('id_kategori');
         $table->primary(['id', 'id_kategori']);
         $table->foreign('id')->references('id')->on('bukus')->onDelete('cascade');
         $table->foreign('id_kategori')->references('id_kategori')->on('kategori_buku')->onDelete('cascade');
     });
+    }
 }
 
 public function down()
