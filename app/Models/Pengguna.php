@@ -5,7 +5,7 @@ namespace App\Models;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
-class User extends Authenticatable
+class Pengguna extends Authenticatable
 {
     use Notifiable;
 
@@ -19,6 +19,7 @@ class User extends Authenticatable
         'role',
         'tanggal_daftar',
         'last_login',
+        'remember_token',
     ];
 
     protected $hidden = [
@@ -26,13 +27,9 @@ class User extends Authenticatable
         'remember_token',
     ];
 
-    public function peminjaman()
+    // Relasi ke member
+    public function member()
     {
-        return $this->hasMany(Peminjaman::class, 'id_user', 'id_user');
-    }
-
-    public function isAdmin(): bool
-    {
-        return $this->role === 'admin';
+        return $this->hasOne(Member::class, 'id_user', 'id_user');
     }
 }
