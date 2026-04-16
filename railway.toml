@@ -2,4 +2,3 @@
 builder = "DOCKERFILE"
 
 [deploy]
-# tidak perlu startCommand, sudah di CMD Dockerfile
