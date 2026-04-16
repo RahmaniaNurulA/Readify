@@ -77,10 +77,10 @@ class RegisterController extends Controller
                 ->with('success', 'Akun berhasil dibuat! Silakan login.');
 
         } catch (\Exception $e) {
-            DB::rollBack();
-            return redirect()->back()
-                ->with('error', 'Terjadi kesalahan. Silakan coba lagi.')
-                ->withInput($request->except('password', 'password_confirmation'));
+    DB::rollBack();
+    return redirect()->back()
+        ->with('error', 'Error: ' . $e->getMessage()) // ← tambah pesan error asli
+        ->withInput($request->except('password', 'password_confirmation'));
         }
     }
 }
