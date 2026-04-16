@@ -27,7 +27,7 @@ RUN sed -ri -e 's!/var/www/!${APACHE_DOCUMENT_ROOT}!g' \
 RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache
 
 COPY .env.example .env
-RUN php artisan key:generate
+RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache
 
 EXPOSE 80
 
