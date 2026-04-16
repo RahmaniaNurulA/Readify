@@ -13,13 +13,22 @@ return new class extends Migration
    public function up(): void
 {
     Schema::create('buku', function (Blueprint $table) {
-        $table->id();
-        $table->string('judul');
-        $table->string('penulis')->nullable();
+        $table->id('id_buku');
+        $table->string('judul_buku');
+        $table->string('pengarang')->nullable();
         $table->string('penerbit')->nullable();
         $table->integer('tahun_terbit')->nullable();
-        $table->text('deskripsi')->nullable();
+        $table->unsignedBigInteger('id_kategori')->nullable();
+        $table->string('cover')->nullable();
+        $table->integer('jumlah_buku')->default(0);
+        $table->string('file_buku')->nullable();
+        $table->text('sinopsis')->nullable();
         $table->timestamps();
+
+        $table->foreign('id_kategori')
+              ->references('id_kategori')
+              ->on('kategori_buku')
+              ->onDelete('set null');
     });
 }
 

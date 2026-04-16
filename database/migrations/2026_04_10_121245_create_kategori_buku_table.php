@@ -9,10 +9,10 @@ return new class extends Migration
     /**
      * Run the migrations.
      */
-    public function up(): void
+   public function up(): void
 {
     Schema::create('kategori_buku', function (Blueprint $table) {
-        $table->id();
+        $table->id('id_kategori');
         $table->string('nama_kategori');
         $table->timestamps();
     });
