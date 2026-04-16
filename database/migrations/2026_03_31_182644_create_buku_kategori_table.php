@@ -11,14 +11,14 @@ return new class extends Migration
      */
     public function up(): void
     {
+        if (!Schema::hasTable('buku_kategori')) {
         Schema::create('buku_kategori', function (Blueprint $table) {
-    $table->id();
-
-    $table->foreignId('id_buku')->constrained('buku')->onDelete('cascade');
-    $table->foreignId('id_kategori')->constrained('kategori_buku')->onDelete('cascade');
-
-    $table->timestamps();
-});
+            $table->id();
+            $table->unsignedBigInteger('id_buku');
+            $table->unsignedBigInteger('id_kategori');
+            $table->timestamps();
+        });
+    }
     }
 
     public function down()
