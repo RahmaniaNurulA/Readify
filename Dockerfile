@@ -31,8 +31,13 @@ RUN sed -ri -e 's!/var/www/!${APACHE_DOCUMENT_ROOT}!g' \
 
 RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache
 
-EXPOSE 80
+EXPOSE ${PORT:-80}
 
-CMD bash -c "until php artisan db:show > /dev/null 2>&1; do sleep 2; done \
-    && php artisan migrate:fresh --force --seed \
+CMD bash -c "\
+    sed -i 's/Listen 80/Listen ${PORT:-80}/' /etc/apache2/ports.conf && \
+    sed -i 's/:80>/:${PORT:-80}>/' /etc/apache2/sites-available/*.conf && \
+    until php artisan db:show > /dev/null 2>&1; do echo 'Waiting for DB...'; sleep 2; done && \
+    php artisan migrate --force && \
+    apache2-foreground"
+    && php artisan migrate --force --seed \
     && apache2-foreground"
