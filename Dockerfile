@@ -11,7 +11,10 @@ COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 WORKDIR /var/www/html
 COPY . .
 
-RUN cp .env.example .env
+RUN cp .env.example .env && \
+    sed -i 's/DB_CONNECTION=sqlite/DB_CONNECTION=mysql/' .env && \
+    echo "DB_HOST=mysql.railway.internal" >> .env && \
+    echo "DB_PORT=3306" >> .env
 RUN composer install --no-dev --optimize-autoloader
 RUN php artisan key:generate
 
@@ -28,6 +31,7 @@ EXPOSE ${PORT:-80}
 CMD bash -c "\
     sed -i 's/Listen 80/Listen ${PORT:-80}/' /etc/apache2/ports.conf && \
     sed -i 's/:80>/:${PORT:-80}>/' /etc/apache2/sites-available/*.conf && \
+    php artisan config:clear && \
     until php artisan db:show > /dev/null 2>&1; do echo 'Waiting for DB...'; sleep 2; done && \
     php artisan migrate --force && \
     apache2-foreground"
