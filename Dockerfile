@@ -33,10 +33,5 @@ CMD bash -c "\
     sed -i 's/Listen 80/Listen ${PORT:-80}/' /etc/apache2/ports.conf && \
     sed -i 's/:80>/:${PORT:-80}>/' /etc/apache2/sites-available/*.conf && \
     php artisan config:clear && \
-    until php artisan db:show > /dev/null 2>&1; do \
-        echo 'Waiting for DB...' && \
-        php artisan db:show 2>&1 | tail -5 && \
-        sleep 2; \
-    done && \
-    php artisan migrate --force && \
+    php artisan migrate --force --graceful && \
     apache2-foreground"
