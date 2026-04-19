@@ -27,11 +27,14 @@ RUN sed -ri -e 's!/var/www/!${APACHE_DOCUMENT_ROOT}!g' \
 
 RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache
 
+# Fix Apache MPM conflict
+RUN a2dismod mpm_event mpm_worker || true && a2enmod mpm_prefork
+
 EXPOSE ${PORT:-80}
 
 CMD bash -c "\
     sed -i 's/Listen 80/Listen ${PORT:-80}/' /etc/apache2/ports.conf && \
     sed -i 's/:80>/:${PORT:-80}>/' /etc/apache2/sites-available/*.conf && \
     php artisan config:clear && \
-    php artisan migrate --force --graceful && \
+    php artisan migrate --force --graceful || true && \
     apache2-foreground"
