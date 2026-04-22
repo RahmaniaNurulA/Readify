@@ -3,6 +3,9 @@ RUN apt-get update && apt-get install -y \
     libpng-dev libonig-dev libxml2-dev zip unzip git curl \
     libicu-dev \
     && docker-php-ext-install pdo_mysql mbstring exif pcntl bcmath gd intl
+RUN echo "upload_max_filesize=64M" > /usr/local/etc/php/conf.d/uploads.ini \
+    && echo "post_max_size=64M" >> /usr/local/etc/php/conf.d/uploads.ini \
+    && echo "max_execution_time=300" >> /usr/local/etc/php/conf.d/uploads.ini
 RUN a2enmod rewrite
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 WORKDIR /var/www/html
