@@ -212,6 +212,12 @@
             <i class="fas fa-arrow-left"></i> Kembali ke Daftar Buku
         </a>
 
+        @if(session('error'))
+        <div class="errors-box">
+            <ul><li>{{ session('error') }}</li></ul>
+        </div>
+        @endif
+
         @if($errors->any())
         <div class="errors-box">
             <ul>

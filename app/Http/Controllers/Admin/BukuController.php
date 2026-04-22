@@ -58,17 +58,25 @@ class BukuController extends Controller
         $coverPath    = null;
         $fileBukuPath = null;
 
-        if ($request->hasFile('cover')) {
-            $coverPath = cloudinary()->upload($request->file('cover')->getRealPath(), [
-                'folder' => 'covers'
-            ])->getSecurePath();
+       if ($request->hasFile('cover')) {
+            try {
+                $coverPath = cloudinary()->upload($request->file('cover')->getRealPath(), [
+                    'folder' => 'covers'
+                ])->getSecurePath();
+            } catch (\Exception $e) {
+                return back()->with('error', 'Cover error: ' . $e->getMessage())->withInput();
+            }
         }
 
         if ($request->hasFile('file_buku')) {
-            $fileBukuPath = cloudinary()->uploadFile($request->file('file_buku')->getRealPath(), [
-                'folder' => 'buku_files',
-                'resource_type' => 'raw'
-            ])->getSecurePath();
+            try {
+                $fileBukuPath = cloudinary()->uploadFile($request->file('file_buku')->getRealPath(), [
+                    'folder' => 'buku_files',
+                    'resource_type' => 'raw'
+                ])->getSecurePath();
+            } catch (\Exception $e) {
+                return back()->with('error', 'File error: ' . $e->getMessage())->withInput();
+            }
         }
 
         $id = DB::table('buku')->insertGetId([
