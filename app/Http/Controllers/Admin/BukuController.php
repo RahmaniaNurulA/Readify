@@ -5,11 +5,10 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Storage;
 
 class BukuController extends Controller
 {
-    // ── INDEX ─────────────────────────────────────────────────────
+    // ── INDEX 
     public function index(Request $request)
     {
         $search   = $request->input('search');
@@ -34,14 +33,14 @@ class BukuController extends Controller
         return view('admin.buku.index', compact('buku', 'kategoris'));
     }
 
-    // ── CREATE ────────────────────────────────────────────────────
+    // ── CREATE 
     public function create()
     {
         $kategoris = DB::table('kategori_buku')->orderBy('nama_kategori')->get();
         return view('admin.buku.create', compact('kategoris'));
     }
 
-    // ── STORE ─────────────────────────────────────────────────────
+    // ── STORE 
     public function store(Request $request)
     {
         $request->validate([
@@ -60,11 +59,16 @@ class BukuController extends Controller
         $fileBukuPath = null;
 
         if ($request->hasFile('cover')) {
-            $coverPath = $request->file('cover')->store('covers', 'public');
+            $coverPath = cloudinary()->upload($request->file('cover')->getRealPath(), [
+                'folder' => 'covers'
+            ])->getSecurePath();
         }
 
         if ($request->hasFile('file_buku')) {
-            $fileBukuPath = $request->file('file_buku')->store('buku_files', 'public');
+            $fileBukuPath = cloudinary()->uploadFile($request->file('file_buku')->getRealPath(), [
+                'folder' => 'buku_files',
+                'resource_type' => 'raw'
+            ])->getSecurePath();
         }
 
         $id = DB::table('buku')->insertGetId([
@@ -89,7 +93,7 @@ class BukuController extends Controller
             ->with('success', 'Buku "' . $request->judul_buku . '" berhasil ditambahkan!');
     }
 
-    // ── SHOW ──────────────────────────────────────────────────────
+    // ── SHOW 
     public function show($id)
     {
         $buku = DB::table('buku')
@@ -106,7 +110,7 @@ class BukuController extends Controller
         return view('admin.buku.show', compact('buku'));
     }
 
-    // ── EDIT ──────────────────────────────────────────────────────
+    // ── EDIT 
     public function edit($id)
     {
         $buku = DB::table('buku')->where('id_buku', $id)->first();
@@ -121,7 +125,7 @@ class BukuController extends Controller
         return view('admin.buku.edit', compact('buku', 'kategoris'));
     }
 
-    // ── UPDATE ────────────────────────────────────────────────────
+    // ── UPDATE 
     public function update(Request $request, $id)
     {
         $bukuLama = DB::table('buku')->where('id_buku', $id)->first();
@@ -147,13 +151,16 @@ class BukuController extends Controller
         $fileBukuPath = $bukuLama->file_buku;
 
         if ($request->hasFile('cover')) {
-            if ($bukuLama->cover) Storage::disk('public')->delete($bukuLama->cover);
-            $coverPath = $request->file('cover')->store('covers', 'public');
+            $coverPath = cloudinary()->upload($request->file('cover')->getRealPath(), [
+                'folder' => 'covers'
+            ])->getSecurePath();
         }
 
         if ($request->hasFile('file_buku')) {
-            if ($bukuLama->file_buku) Storage::disk('public')->delete($bukuLama->file_buku);
-            $fileBukuPath = $request->file('file_buku')->store('buku_files', 'public');
+            $fileBukuPath = cloudinary()->uploadFile($request->file('file_buku')->getRealPath(), [
+                'folder' => 'buku_files',
+                'resource_type' => 'raw'
+            ])->getSecurePath();
         }
 
         // Update semua field di tabel buku
@@ -179,14 +186,12 @@ class BukuController extends Controller
             ->with('success', 'Buku berhasil diperbarui!');
     }
 
-    // ── DESTROY ───────────────────────────────────────────────────
+    // ── DESTROY 
     public function destroy($id)
     {
         $buku = DB::table('buku')->where('id_buku', $id)->first();
 
         if ($buku) {
-            if ($buku->cover)     Storage::disk('public')->delete($buku->cover);
-            if ($buku->file_buku) Storage::disk('public')->delete($buku->file_buku);
             DB::table('buku')->where('id_buku', $id)->delete();
         }
 
