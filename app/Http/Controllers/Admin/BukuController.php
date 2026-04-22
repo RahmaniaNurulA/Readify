@@ -64,7 +64,7 @@ class BukuController extends Controller
                     'folder' => 'covers'
                 ])->getSecurePath();
             } catch (\Exception $e) {
-                return back()->with('error', 'Cover error: ' . $e->getMessage())->withInput();
+                dd('Cloudinary Error: ' . $e->getMessage());
             }
         }
 
