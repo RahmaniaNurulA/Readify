@@ -26,5 +26,5 @@ CMD bash -c "\
     a2dismod mpm_event mpm_worker 2>/dev/null || true && \
     a2enmod mpm_prefork 2>/dev/null || true && \
     php artisan config:clear && \
-    php artisan migrate:fresh --force --seed && \
+    php artisan migrate --force || true && \
     apache2-foreground"
