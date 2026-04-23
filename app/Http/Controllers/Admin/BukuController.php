@@ -60,14 +60,19 @@ class BukuController extends Controller
 
        if ($request->hasFile('cover')) {
             try {
-                $uploadedFile = $request->file('cover');
-                $result = cloudinary()->upload($uploadedFile->getRealPath(), [
-                    'folder' => 'covers',
-                    'resource_type' => 'image'
+                \Cloudinary\Cloudinary::config([
+                    'cloud_name' => env('CLOUDINARY_CLOUD_NAME'),
+                    'api_key'    => env('CLOUDINARY_KEY'),
+                    'api_secret' => env('CLOUDINARY_SECRET'),
                 ]);
-                $coverPath = $result->getSecurePath();
+                
+                $api = new \Cloudinary\Api\Upload\UploadApi();
+                $result = $api->upload($request->file('cover')->getRealPath(), [
+                    'folder' => 'covers'
+                ]);
+                $coverPath = $result['secure_url'];
             } catch (\Exception $e) {
-                dd('Cloudinary Error: ' . $e->getMessage(), config('cloudinary'));
+                dd('Error: ' . $e->getMessage());
             }
         }
 
